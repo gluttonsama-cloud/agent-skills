@@ -1,7 +1,7 @@
 # Agent Skills
 
-Private, installable Agent Skills for the team. Personal runtime data is never
-stored in this repository.
+Installable Agent Skills for the team. Personal runtime data is never stored in
+this repository.
 
 ## Available skills
 
@@ -10,17 +10,7 @@ stored in this repository.
 
 ## Install for Cursor
 
-The repository owner must first add each teammate under **Settings →
-Collaborators**. After the teammate accepts the invitation, configure GitHub
-SSH and install the skill globally:
-
-```bash
-npx skills add git@github.com:gluttonsama-cloud/agent-skills.git \
-  --skill daily-report --agent cursor --global --yes
-```
-
-If GitHub CLI authentication is already configured for HTTPS, this form also
-works:
+Install the skill globally without a GitHub account or repository invitation:
 
 ```bash
 npx skills add https://github.com/gluttonsama-cloud/agent-skills \
