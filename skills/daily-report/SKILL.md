@@ -54,14 +54,26 @@ ledger JSON unless asked.
    by the transcript: created or changed artifacts, implemented behavior,
    completed investigation, or a concrete decision. Exclude unfinished
    intentions and tentative plans.
-3. Split independent PRs, documents, designs, implementations, or decisions
-   into separate items. Keep titles concise enough for `今日完成`.
-4. Treat only relevant `http://` or `https://` work-product URLs as shareable
+3. Start with one report item per conversation. Merge implementation, repository
+   setup, documentation, compatibility work, testing, and release steps when
+   they contribute to the same deliverable or reporting goal. Use an umbrella
+   title and summarize the merged sub-results in `description`.
+4. Split items only when the outcomes have distinct goals and are independently
+   meaningful to report, such as separate PRs, documents, designs, or decisions
+   that could stand alone. Also split when the user explicitly asks. Do not
+   create one item per implementation step merely because several changes were
+   completed. Keep titles concise enough for `今日完成`.
+5. For a merged item, select the most representative work product as
+   `primary_url`, retain other relevant URLs in `urls`, and combine all local
+   paths in `local_artifacts`. For example, implementing a skill, publishing its
+   repository, writing its usage guide, and validating multiple clients should
+   normally become one item such as `沉淀并发布跨客户端日报 Skill`.
+6. Treat only relevant `http://` or `https://` work-product URLs as shareable
    links. Exclude unrelated references. Keep local paths in `local_artifacts`;
    never present them as submission links.
-5. Let explicit notes after `record` refine the extraction without overriding
+7. Let explicit notes after `record` refine the extraction without overriding
    transcript facts.
-6. Write this payload:
+8. Write this payload:
 
 ```json
 {
