@@ -10,8 +10,9 @@ stored in this repository.
 
 ## Install for Cursor
 
-Ask the repository owner for private repository access, configure GitHub SSH,
-then install the skill globally:
+The repository owner must first add each teammate under **Settings →
+Collaborators**. After the teammate accepts the invitation, configure GitHub
+SSH and install the skill globally:
 
 ```bash
 npx skills add git@github.com:gluttonsama-cloud/agent-skills.git \
@@ -40,6 +41,12 @@ Update an installed copy after new versions are merged:
 npx skills update daily-report --global --yes
 ```
 
+## Contributing
+
+The initial repository bootstrap is committed directly to `main`. For later
+changes, create a branch and open a pull request so skill instructions and
+scripts can be reviewed together before teammates update their installed copy.
+
 ## Privacy
 
 The skill writes each person's profile and ledger to their own machine. Never
@@ -58,4 +65,3 @@ Requires Python 3.9 or newer. Run the test suite with:
 ```bash
 python3 tests/test_daily_report.py -v
 ```
-
