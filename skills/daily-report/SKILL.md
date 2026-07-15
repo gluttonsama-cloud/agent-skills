@@ -1,6 +1,6 @@
 ---
 name: daily-report
-description: Record completed work from the current agent conversation into a shared local ledger and generate mentor-group daily reports across conversations. Use only when the user explicitly invokes `/daily-report` with `record`, `list`, `edit`, `remove`, `generate`, or `setup`; do not invoke for ordinary status summaries.
+description: Record completed work from the current agent conversation into a shared local ledger and generate mentor-group daily reports across conversations. Use only when the user explicitly invokes `/daily-report` or `$daily-report` with `record`, `list`, `edit`, `remove`, `generate`, or `setup`; do not invoke for ordinary status summaries.
 ---
 
 # Daily Report
@@ -11,7 +11,8 @@ in Chinese unless the user requests another language.
 
 ## Commands
 
-Interpret the first argument after `/daily-report` as a subcommand:
+Interpret the first argument after `/daily-report` or `$daily-report` as a
+subcommand:
 
 - `record [date or notes]`: record completed work from the current conversation.
 - `list [date]`: show saved items and missing links; default to today.
@@ -21,7 +22,8 @@ Interpret the first argument after `/daily-report` as a subcommand:
   meeting minutes.
 - `setup <name>`: save or replace the report name.
 
-Do not activate implicitly. Do not create automations or reminders.
+Treat the two invocation forms as equivalent. Do not activate implicitly. Do
+not create automations or reminders.
 
 ## Payload safety
 
@@ -136,4 +138,3 @@ need shareable links. Otherwise keep the response minimal.
 - `item_not_found`: show the date list or ask for the correct ID.
 - Invalid dates, payloads, or URLs: identify the rejected field and never invent
   a replacement.
-
