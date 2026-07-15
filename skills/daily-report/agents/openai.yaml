@@ -1,0 +1,7 @@
+interface:
+  display_name: "日报助手"
+  short_description: "跨任务收录成果并按导师群规范生成可复制日报"
+  default_prompt: "使用 $daily-report 记录当前任务的已完成工作，或生成今天的日报。"
+
+policy:
+  allow_implicit_invocation: false

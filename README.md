@@ -6,16 +6,25 @@
 
 - `daily-report`：跨对话记录已完成的工作，并按导师群规范生成日报。
 
-## 在 Cursor 中安装
+## 安装
 
-无需 GitHub 账号或仓库邀请，直接全局安装：
+无需 GitHub 账号或仓库邀请。根据使用的 Agent 选择安装命令。
+
+### Codex
+
+```bash
+npx skills add https://github.com/gluttonsama-cloud/agent-skills \
+  --skill daily-report --agent codex --global --yes
+```
+
+### Cursor
 
 ```bash
 npx skills add https://github.com/gluttonsama-cloud/agent-skills \
   --skill daily-report --agent cursor --global --yes
 ```
 
-如果安装后没有立即显示 Skill，请重启 Cursor。随后在 Agent 对话中完成初始化并验证：
+如果安装后没有立即显示 Skill，请重启 Codex 或 Cursor。随后在 Agent 对话中完成初始化并验证：
 
 ```text
 /daily-report setup 你的姓名
