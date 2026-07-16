@@ -69,15 +69,21 @@ ledger JSON unless asked.
    request URL over a commit URL. Keep commit URLs as auxiliary links. If no PR
    exists yet, use the commit as a temporary primary link so the work remains
    traceable. The script automatically promotes a PR found in `urls`.
-6. For example, implementing a skill, publishing its repository, writing its
+6. When only a commit URL is available and the client has authenticated GitHub
+   or Git-provider read access, look up pull requests associated with that
+   commit. If exactly one relevant PR is returned, add it to `urls`. Do not
+   create a PR. If lookup is unavailable, returns no PR, or returns ambiguous
+   candidates, keep the commit fallback and let `pr_links_pending` drive the
+   reminder.
+7. For example, implementing a skill, publishing its repository, writing its
    usage guide, and validating multiple clients should normally become one item
    such as `沉淀并发布跨客户端日报 Skill`.
-7. Treat only relevant `http://` or `https://` work-product URLs as shareable
+8. Treat only relevant `http://` or `https://` work-product URLs as shareable
    links. Exclude unrelated references. Keep local paths in `local_artifacts`;
    never present them as submission links.
-8. Let explicit notes after `record` refine the extraction without overriding
+9. Let explicit notes after `record` refine the extraction without overriding
    transcript facts.
-9. Write this payload:
+10. Write this payload:
 
 ```json
 {
@@ -150,9 +156,12 @@ Render the returned `report` verbatim in a plain-text code block:
 Do not add `@所有人` or format instructions. When `missing_links` is non-empty,
 label the result as a draft outside the code block and list the item IDs that
 need shareable links. When `pr_links_pending` is non-empty, keep the returned
-commit link as a temporary fallback, then add a reminder outside the code block
-for each item in this exact shape, using the invocation form active in the
-current client:
+commit link as a temporary fallback. If authenticated Git-provider read access
+is available and the lookup has not already been attempted, first try to resolve
+an associated PR as described in the record workflow. For a unique match, edit
+the item with `add_urls` and regenerate. Otherwise add a reminder outside the
+code block for each item in this exact shape, using the invocation form active
+in the current client:
 
 ```text
 PR 链接待补：事项标题（dri-xxxxxxxxxxxx）

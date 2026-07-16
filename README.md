@@ -59,7 +59,7 @@ npx skills add https://github.com/gluttonsama-cloud/agent-skills \
 
 Skill 只收录当前对话中已经完成的成果。相同日期、相同对话再次执行时会更新原记录，不会重复添加。
 
-代码成果会优先使用 PR 链接。只有 commit 链接时会暂时保留该链接，并提醒后续补充 PR。
+代码成果会优先使用 PR 链接。只有 commit 链接时，Skill 会在权限允许的情况下只读查询其关联 PR；唯一命中时自动补齐。没有 PR、无法查询或存在多个候选时，会暂时保留 commit 并提醒后续补充。
 
 ### 3. 查看和维护记录
 
