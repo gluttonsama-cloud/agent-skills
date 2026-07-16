@@ -65,15 +65,25 @@ ledger JSON unless asked.
    completed. Keep titles concise enough for `今日完成`.
 5. For a merged item, select the most representative work product as
    `primary_url`, retain other relevant URLs in `urls`, and combine all local
-   paths in `local_artifacts`. For example, implementing a skill, publishing its
-   repository, writing its usage guide, and validating multiple clients should
-   normally become one item such as `沉淀并发布跨客户端日报 Skill`.
-6. Treat only relevant `http://` or `https://` work-product URLs as shareable
+   paths in `local_artifacts`. For code changes, prefer a pull request or merge
+   request URL over a commit URL. Keep commit URLs as auxiliary links. If no PR
+   exists yet, use the commit as a temporary primary link so the work remains
+   traceable. The script automatically promotes a PR found in `urls`.
+6. When only a commit URL is available and the client has authenticated GitHub
+   or Git-provider read access, look up pull requests associated with that
+   commit. If exactly one relevant PR is returned, add it to `urls`. Do not
+   create a PR. If lookup is unavailable, returns no PR, or returns ambiguous
+   candidates, keep the commit fallback and let `pr_links_pending` drive the
+   reminder.
+7. For example, implementing a skill, publishing its repository, writing its
+   usage guide, and validating multiple clients should normally become one item
+   such as `沉淀并发布跨客户端日报 Skill`.
+8. Treat only relevant `http://` or `https://` work-product URLs as shareable
    links. Exclude unrelated references. Keep local paths in `local_artifacts`;
    never present them as submission links.
-7. Let explicit notes after `record` refine the extraction without overriding
+9. Let explicit notes after `record` refine the extraction without overriding
    transcript facts.
-8. Write this payload:
+10. Write this payload:
 
 ```json
 {
@@ -97,16 +107,20 @@ Set `primary_url` to `null` when no shareable link exists. The script upserts
 one record per date and conversation key, so a repeated `record` refreshes that
 conversation instead of duplicating it.
 
-Confirm saved item IDs and titles. Call out missing primary links.
+Confirm saved item IDs and titles. Call out missing primary links. When
+`pr_links_pending` is non-empty, explain that the commit link is only a fallback
+and provide the exact active-client edit command shown below.
 
 ## List, edit, and remove
 
-- Run `list --date <date>` and present item IDs, titles, primary links, and the
-  missing-link count.
+- Run `list --date <date>` and present item IDs, titles, primary links, the
+  missing-link count, and any `pr_links_pending` reminders.
 - Before `edit`, list the target when its values are unknown. Send only the
   requested changes. Supported fields are `title`, `description`,
   `primary_url`, `urls`, `add_urls`, `local_artifacts`, and
   `add_local_artifacts`.
+- When the user supplies a PR URL, send it through `add_urls`; the script will
+  preserve the commit in `urls` and promote the PR to `primary_url`.
 - Run `remove <item-id>` only for the supplied ID and confirm its title.
 
 Accept `YYYY-MM-DD` and `M.D`. Default to the current date in
@@ -141,7 +155,21 @@ Render the returned `report` verbatim in a plain-text code block:
 
 Do not add `@所有人` or format instructions. When `missing_links` is non-empty,
 label the result as a draft outside the code block and list the item IDs that
-need shareable links. Otherwise keep the response minimal.
+need shareable links. When `pr_links_pending` is non-empty, keep the returned
+commit link as a temporary fallback. If authenticated Git-provider read access
+is available and the lookup has not already been attempted, first try to resolve
+an associated PR as described in the record workflow. For a unique match, edit
+the item with `add_urls` and regenerate. Otherwise add a reminder outside the
+code block for each item in this exact shape, using the invocation form active
+in the current client:
+
+```text
+PR 链接待补：事项标题（dri-xxxxxxxxxxxx）
+填写：/daily-report edit dri-xxxxxxxxxxxx 补充 PR 链接 https://github.com/org/repo/pull/123
+```
+
+Use `$daily-report` instead of `/daily-report` when the current invocation uses
+the Codex form. Otherwise keep the response minimal.
 
 ## Errors
 
