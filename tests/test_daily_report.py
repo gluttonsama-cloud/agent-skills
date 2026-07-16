@@ -181,6 +181,67 @@ class DailyReportTests(unittest.TestCase):
         final_list = self.run_command("list", "--date", DAY)
         self.assertEqual(final_list["count"], 2)
 
+    def test_pull_request_links_are_preferred_and_commit_links_are_flagged(self):
+        self.setup_name()
+        commit_url = "https://github.com/example/project/commit/abc123"
+        pull_url = "https://github.com/example/project/pull/42"
+        payload = self.payload(
+            {
+                "date": DAY,
+                "thread_id": "thread-pr-links",
+                "thread_title": "实现链接优先级",
+                "items": [
+                    {
+                        "title": "仅提交代码改动",
+                        "primary_url": commit_url,
+                        "urls": [commit_url],
+                    },
+                    {
+                        "title": "完成带 PR 的代码改动",
+                        "primary_url": commit_url,
+                        "urls": [commit_url, pull_url],
+                    },
+                ],
+            }
+        )
+        recorded = self.run_command(
+            "record", "--payload", str(payload), "--consume-payload"
+        )
+        commit_only = recorded["items"][0]
+        with_pull = recorded["items"][1]
+        self.assertEqual(commit_only["primary_url"], commit_url)
+        self.assertEqual(with_pull["primary_url"], pull_url)
+        self.assertEqual(
+            recorded["pr_links_pending"],
+            [
+                {
+                    "id": commit_only["id"],
+                    "title": "仅提交代码改动",
+                    "current_url": commit_url,
+                }
+            ],
+        )
+
+        report = self.run_command("generate", "--date", DAY)
+        self.assertIn(f"- 仅提交代码改动：{commit_url}", report["report"])
+        self.assertIn(f"- 完成带 PR 的代码改动：{pull_url}", report["report"])
+        self.assertEqual(len(report["pr_links_pending"]), 1)
+
+        edit = self.payload({"add_urls": [pull_url]})
+        edited = self.run_command(
+            "edit",
+            commit_only["id"],
+            "--payload",
+            str(edit),
+            "--consume-payload",
+        )
+        self.assertEqual(edited["item"]["primary_url"], pull_url)
+        self.assertFalse(edited["pr_link_pending"])
+
+        complete = self.run_command("generate", "--date", DAY)
+        self.assertEqual(complete["pr_links_pending"], [])
+        self.assertIn(f"- 仅提交代码改动：{pull_url}", complete["report"])
+
 
 if __name__ == "__main__":
     unittest.main()

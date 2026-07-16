@@ -134,6 +134,65 @@ def unique_urls(values: Any, field: str = "urls") -> list[str]:
     return [value for value in unique_strings(values, field) if is_shareable_url(value)]
 
 
+def is_pull_request_url(value: Any) -> bool:
+    if not is_shareable_url(value):
+        return False
+    path = urlparse(value.strip()).path.rstrip("/")
+    return bool(
+        re.search(r"/(?:pull|pulls)/\d+$", path)
+        or re.search(r"/-/merge_requests/\d+$", path)
+    )
+
+
+def is_commit_url(value: Any) -> bool:
+    if not is_shareable_url(value):
+        return False
+    path = urlparse(value.strip()).path.rstrip("/")
+    return bool(re.search(r"/(?:-/)?commit/[0-9A-Za-z._-]+$", path))
+
+
+def preferred_primary_url(primary_url: Any, urls: Any) -> str | None:
+    candidates: list[str] = []
+    if is_shareable_url(primary_url):
+        candidates.append(primary_url.strip())
+    if isinstance(urls, list):
+        for value in urls:
+            if is_shareable_url(value):
+                normalized = value.strip()
+                if normalized not in candidates:
+                    candidates.append(normalized)
+    pull_request = next((value for value in candidates if is_pull_request_url(value)), None)
+    return pull_request or (candidates[0] if candidates else None)
+
+
+def promote_primary_url(item: dict[str, Any]) -> None:
+    primary_url = preferred_primary_url(item.get("primary_url"), item.get("urls", []))
+    item["primary_url"] = primary_url
+    urls = [
+        value
+        for value in item.get("urls", [])
+        if is_shareable_url(value) and value != primary_url
+    ]
+    item["urls"] = ([primary_url] if primary_url else []) + urls
+
+
+def pending_pr_links(items: list[dict[str, Any]]) -> list[dict[str, str]]:
+    pending: list[dict[str, str]] = []
+    for item in items:
+        primary_url = preferred_primary_url(
+            item.get("primary_url"), item.get("urls", [])
+        )
+        if primary_url and is_commit_url(primary_url):
+            pending.append(
+                {
+                    "id": str(item.get("id", "")),
+                    "title": str(item.get("title", "")),
+                    "current_url": primary_url,
+                }
+            )
+    return pending
+
+
 def default_ledger() -> dict[str, Any]:
     return {"schema_version": SCHEMA_VERSION, "entries": []}
 
@@ -285,6 +344,11 @@ def clean_item(
     if primary_url and primary_url not in urls:
         urls.insert(0, primary_url)
 
+    normalized_link = {"primary_url": primary_url, "urls": urls}
+    promote_primary_url(normalized_link)
+    primary_url = normalized_link["primary_url"]
+    urls = normalized_link["urls"]
+
     existing = None
     supplied_id = raw.get("id")
     if isinstance(supplied_id, str):
@@ -383,6 +447,7 @@ def command_record(home: Path, args: argparse.Namespace) -> dict[str, Any]:
         "missing_links": [
             {"id": item["id"], "title": item["title"]} for item in missing
         ],
+        "pr_links_pending": pending_pr_links(items),
     }
 
 
@@ -398,6 +463,7 @@ def flatten_day(ledger: dict[str, Any], day: str) -> list[dict[str, Any]]:
             merged["thread_id"] = entry.get("thread_id")
             merged["thread_title"] = entry.get("thread_title")
             merged["captured_at"] = entry.get("captured_at")
+            promote_primary_url(merged)
             flattened.append(merged)
     return flattened
 
@@ -413,6 +479,8 @@ def command_list(home: Path, args: argparse.Namespace) -> dict[str, Any]:
         "date": day,
         "count": len(items),
         "missing_link_count": len(missing),
+        "pr_link_pending_count": len(pending_pr_links(items)),
+        "pr_links_pending": pending_pr_links(items),
         "items": items,
     }
 
@@ -484,8 +552,7 @@ def command_edit(home: Path, args: argparse.Namespace) -> dict[str, Any]:
                 item["primary_url"] = url
                 if url not in item.get("urls", []):
                     item.setdefault("urls", []).insert(0, url)
-        elif not item.get("primary_url") and item.get("urls"):
-            item["primary_url"] = item["urls"][0]
+        promote_primary_url(item)
 
         atomic_write(ledger_path, ledger)
         updated = dict(item)
@@ -494,6 +561,7 @@ def command_edit(home: Path, args: argparse.Namespace) -> dict[str, Any]:
         "status": "ok",
         "item": updated,
         "missing_link": not bool(updated.get("primary_url")),
+        "pr_link_pending": bool(pending_pr_links([updated])),
     }
 
 
@@ -583,6 +651,7 @@ def command_generate(home: Path, args: argparse.Namespace) -> dict[str, Any]:
         "missing_links": [
             {"id": item["id"], "title": item["title"]} for item in missing
         ],
+        "pr_links_pending": pending_pr_links(items),
         "tomorrow_plan": tomorrow_plan,
     }
 
