@@ -1,0 +1,4 @@
+interface:
+  display_name: "任务规划与决策维护"
+  short_description: "逐项制定并执行任务计划，持续同步关键决策、取舍和验证状态"
+  default_prompt: "Use $plan-and-maintain-decisions to plan this work, execute one task at a time, and keep strategic decisions synchronized."

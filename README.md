@@ -5,6 +5,7 @@
 ## 可用 Skill
 
 - `daily-report`：跨对话记录已完成的工作，并按导师群规范生成日报。
+- `plan-and-maintain-decisions`：逐项制定并执行任务计划，在推进过程中持续维护关键决策与取舍。
 
 ## 安装
 
@@ -15,6 +16,9 @@
 ```bash
 npx skills add https://github.com/gluttonsama-cloud/agent-skills \
   --skill daily-report --agent codex --global --yes
+
+npx skills add https://github.com/gluttonsama-cloud/agent-skills \
+  --skill plan-and-maintain-decisions --agent codex --global --yes
 ```
 
 ### Cursor
@@ -22,9 +26,22 @@ npx skills add https://github.com/gluttonsama-cloud/agent-skills \
 ```bash
 npx skills add https://github.com/gluttonsama-cloud/agent-skills \
   --skill daily-report --agent cursor --global --yes
+
+npx skills add https://github.com/gluttonsama-cloud/agent-skills \
+  --skill plan-and-maintain-decisions --agent cursor --global --yes
 ```
 
 如果安装后没有立即显示 Skill，请重启 Codex 或 Cursor。
+
+### 任务规划与决策维护
+
+当一个项目需要先制定任务、逐项推进，并在范围或方向变化时同步维护决策日志，可使用：
+
+```text
+$plan-and-maintain-decisions 为这个项目制定后续任务，并一次推进一个任务。
+```
+
+Skill 会优先复用已有计划和决策文档，为每项任务定义产出、完成门槛、依赖与替代方案。目标用户、范围、系统边界、交付形态或关键取舍发生变化时，会同步更新决策日志；外部数据或接口暂不可得时，会使用明确标识的 Mock 或待验证假设继续推进。
 
 ## 使用方法
 
