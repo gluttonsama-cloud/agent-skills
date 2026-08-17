@@ -1,0 +1,4 @@
+interface:
+  display_name: "Adaptive Subagent Orchestration"
+  short_description: "Delegate planning, implementation, and validation safely"
+  default_prompt: "Use $orchestrate-subagents across this task's planning, implementation, and validation. Delegate at least one bounded implementation workstream when authorized and safely ownable, use Luna first, and escalate stalled work to Sol."
