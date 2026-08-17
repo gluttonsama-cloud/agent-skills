@@ -6,6 +6,7 @@
 
 - `daily-report`：跨对话记录已完成的工作，并按导师群规范生成日报。
 - `plan-and-maintain-decisions`：逐项制定并执行任务计划，在推进过程中持续维护关键决策与取舍。
+- `adaptive-delegation`：按需并行委派子代理，默认使用 Luna，并在实现连续失败或复杂判断确有价值时升级到 Sol。
 
 ## 安装
 
@@ -32,6 +33,17 @@ npx skills add https://github.com/gluttonsama-cloud/agent-skills \
 ```
 
 如果安装后没有立即显示 Skill，请重启 Codex 或 Cursor。
+
+### Codex 插件
+
+仓库同时提供一个可安装的 Codex 插件市场。克隆仓库后，在仓库根目录运行：
+
+```bash
+codex plugin marketplace add .
+codex plugin add adaptive-delegation@agent-skills
+```
+
+插件会将 `orchestrate-subagents` 技能加载到 Codex。它会为独立工作流启动 1–3 个子代理；Luna 首次失败时只做一次有证据的纠正，仍无法收敛则把失败证据交给 Sol。更新仓库后，在新任务中重新加载插件。
 
 ### 任务规划与决策维护
 

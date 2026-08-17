@@ -1,0 +1,27 @@
+{
+  "name": "adaptive-delegation",
+  "version": "0.1.1",
+  "description": "Orchestrates cost-aware Codex subagents across planning, implementation, and validation with Luna-first routing and evidence-based Sol escalation.",
+  "author": {
+    "name": "Local developer"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Adaptive Delegation",
+    "shortDescription": "Smart, selective parallel subagent orchestration.",
+    "longDescription": "Carries explicit delegation intent across a task, assigns exclusive implementation ownership where safe, uses Luna for normal subagent tasks, and escalates stuck or high-value reasoning work to Sol.",
+    "developerName": "Local developer",
+    "category": "Productivity",
+    "capabilities": [
+      "Subagent orchestration",
+      "Implementation delegation",
+      "Model routing",
+      "Parallel work"
+    ],
+    "defaultPrompt": [
+      "Use adaptive delegation across planning, implementation, and validation for this complex task.",
+      "Parallelize this only where it will materially help.",
+      "Use Luna first and escalate stuck implementation work to Sol."
+    ]
+  }
+}
