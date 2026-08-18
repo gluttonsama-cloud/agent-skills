@@ -1,6 +1,24 @@
 # Agent Skills
 
-供团队安装使用的 Agent Skills。个人运行数据不会存储在本仓库中。
+这是一个面向 Codex、Cursor 等 AI Agent 的可复用 Skill 仓库，用来沉淀团队中反复出现的工作流程、判断规则和自动化工具。
+
+每个 Skill 都是独立目录，可以按需安装，不需要复制整套仓库。Skill 的指令、模板和脚本保存在 GitHub 中，个人配置和运行数据只保留在使用者本机，不会提交到本仓库。
+
+## 快速安装：任务规划与决策维护
+
+已安装 Node.js 和 npm 的 Codex 用户，可以执行一条命令完成全局安装：
+
+```bash
+npx skills add https://github.com/gluttonsama-cloud/agent-skills --skill plan-and-maintain-decisions --agent codex --global --yes
+```
+
+安装后可直接使用：
+
+```text
+$plan-and-maintain-decisions 为这个项目制定后续任务，一次推进一个任务，并持续维护关键决策。
+```
+
+如果安装后没有立即出现在 Skill 列表中，请重启 Codex。
 
 ## 可用 Skill
 
@@ -8,7 +26,7 @@
 - `plan-and-maintain-decisions`：逐项制定并执行任务计划，在推进过程中持续维护关键决策与取舍。
 - `adaptive-delegation`：按需并行委派子代理，默认使用 Luna，并在实现连续失败或复杂判断确有价值时升级到 Sol。
 
-## 安装
+## 安装其他 Skill 或客户端
 
 无需 GitHub 账号或仓库邀请。根据使用的 Agent 选择安装命令。
 
